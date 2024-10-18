@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import Workers from '@/pages/workers';
 import Machines from '@/pages/machines';
 import Login from '@/pages/login';
+import Dashboard from '@/pages/dashboard';
 import Sidebar from '@/components/ui/SideBar';
 import ProtectedRoute from '@/components/protectedRoute';
 
@@ -30,7 +31,7 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/machines" element={<ProtectedRoute requiredRole="SUPERUSER"><Machines /></ProtectedRoute>} />
-          <Route path="/" element={<ProtectedRoute requiredRole="SUPERUSER"><Machines /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute requiredRole="SUPERUSER"><Dashboard /></ProtectedRoute>} />
           <Route
             path="/workers"
             element={
