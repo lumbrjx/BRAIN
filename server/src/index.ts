@@ -13,7 +13,8 @@ import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 import fastifyHealthcheck from "fastify-healthcheck";
 import configureJWT from "./config/session";
-import WebSocketPlugin from '@fastify/websocket';
+// import WebSocketPlugin from '@fastify/websocket';
+import { WebSocketServer } from "ws";
 
 config();
 
@@ -68,13 +69,29 @@ server
 // 	.after(() => {
 // 		server.log.info("All middlewares are ready");
 // 	});
+// server.log.info("Registering WebSocket..");
+// server.register(WebSocketPlugin).after(() => {
+// 	server.log.info("WebSocket is Ready")
+// })
+const wss = new WebSocketServer({port:8081})
+wss.on('connection', (ws) => {
+    console.log('Client connected');
 
-server.log.info("Registering WebSocket..");
-server.register(WebSocketPlugin).after(() => {
-	server.log.info("WebSocket is Ready")
-})
+    // Send a message to the newly connected client
+    ws.send('Welcome to the WebSocket server!');
 
+    // Handle incoming messages from the client
+    ws.on('message', (message) => {
+        console.log(`Received: ${message}`);
+        // Echo the message back to the client
+        ws.send(`You said: ${message}`);
+    });
 
+    // Handle client disconnection
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+});
 server
 	.register(fastifySwagger, {
 		openapi: {

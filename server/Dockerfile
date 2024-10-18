@@ -18,5 +18,6 @@ COPY --from=builder /usr/src/app/dist ./dist
 RUN npm install --only=production
 
 EXPOSE 8080
+EXPOSE 8081
 
 CMD ["node", "dist/src/index.js"]
