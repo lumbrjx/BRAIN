@@ -2,9 +2,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-import Login from './components/ui/Login'
 import Workers from '@/pages/workers'
 import Machines from '@/pages/machines'
+import Login from '@/pages/login'
 const App: React.FC = () => {
   return (
     <Router>

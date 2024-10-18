@@ -21,6 +21,7 @@ export default {
 			Gray: '#D9D9D9',
 			White :'F4F5F6',
 			TextBlack :'242731',
+			DasboardText:'808191',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
