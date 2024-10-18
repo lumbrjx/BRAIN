@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-
 import Workers from '@/pages/workers';
 import Machines from '@/pages/machines';
 import Login from '@/pages/login';
