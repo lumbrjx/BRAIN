@@ -7,8 +7,7 @@ export default function dashboard() {
   return (
     <div>
         <h1 className='text-3xl font-bold'>Hello {username}</h1>
-        <Stats/>
-        <Machines/>
+  
     </div>
   )
 }
