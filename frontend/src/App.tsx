@@ -30,8 +30,8 @@ const AppContent: React.FC = () => {
       <div style={{ flex: 1 }}>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/machines" element={<Machines />} />
-          <Route path="/" element={<Machines />} />
+          <Route path="/machines" element={<ProtectedRoute requiredRole="SUPERUSER"><Machines /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute requiredRole="SUPERUSER"><Machines /></ProtectedRoute>} />
           <Route
             path="/workers"
             element={
