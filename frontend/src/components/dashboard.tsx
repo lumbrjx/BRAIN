@@ -1,4 +1,3 @@
-import React from 'react'
 import Stats from "@/components/stats"
 
 export default function dashboard({auth}:{auth:{username:string, token:string, role:string}}) {

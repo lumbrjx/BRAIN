@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/authWrapper";
 export default function mchines(){
-  const { username, role, logout } = useAuth();
+  const { username, role } = useAuth();
 
 
   return (
