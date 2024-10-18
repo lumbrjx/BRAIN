@@ -1,0 +1,65 @@
+import z from "zod";
+import { config } from "dotenv";
+config();
+
+const envSchema = z.object({
+	POSTGRES_PASSWORD: z.string().min(1),
+	POSTGRES_USER: z.string().min(1),
+	POSTGRES_URL: z.string().min(1),
+	DB_SCHEMA_PATH: z.string().min(1),
+	DB_OUT_PATH: z.string().min(1),
+	API_URL: z.string().min(1),
+	API_VERSION: z.string().min(1),
+	HOST: z.string().min(1),
+	PORT: z.string().min(1),
+	// GOOGLE_CLIENT_ID: z.string().min(1),
+	// GOOGLE_CLIENT_SECRET: z.string().min(1),
+	CALLBACK_URL: z.string().min(1),
+	DEVFEST_URL: z.string().min(1),
+	PASSWORD_SALT: z.string().min(1),
+	SESSION_SECRET: z.string().min(1),
+	SECRET: z.string().min(1),
+	TOKEN_NAME: z.string().min(1),
+	// FB_OAUTH_USERINFO_URL: z.string().min(1),
+	REDIS_HOST: z.string().min(1),
+	// REDIS_PORT: z.string().min(1),
+	REDIS_PASSWORD: z.string().min(1),
+});
+
+const envServer = envSchema.parse({
+	POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
+	POSTGRES_USER: process.env.POSTGRES_USER,
+	POSTGRES_URL: process.env.POSTGRES_URL,
+	DB_SCHEMA_PATH: process.env.DB_SCHEMA_PATH,
+	DB_OUT_PATH: process.env.DB_OUT_PATH,
+	API_URL: process.env.API_URL,
+	API_VERSION: process.env.API_URL,
+	HOST: process.env.HOST,
+	PORT: process.env.PORT,
+	// GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+	// GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+	// GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
+	// GOOGLE_OAUTH_USERINFO_URL: process.env.GOOGLE_OAUTH_USERINFO_URL,
+	CALLBACK_URL: process.env.CALLBACK_URL,
+	DEVFEST_URL: process.env.DEVFEST_URL,
+	PASSWORD_SALT: process.env.PASSWORD_SALT,
+	SESSION_SECRET: process.env.SESSION_SECRET,
+	SECRET: process.env.SECRET,
+	TOKEN_NAME: process.env.TOKEN_NAME,
+	// FB_OAUTH_USERINFO_URL: process.env.FB_OAUTH_USERINFO_URL,
+	REDIS_HOST: process.env.REDIS_HOST,
+	// REDIS_PORT: process.env.REDIS_PORT,
+	REDIS_PASSWORD: process.env.REDIS_PASSWORD
+
+});
+
+export const envServerSchema = envServer;
+type EnvSchemaType = z.infer<typeof envSchema>;
+
+declare global {
+	namespace NodeJS {
+		interface ProcessEnv extends EnvSchemaType { }
+	}
+}
+
+console.log("Validated environment variables.");
