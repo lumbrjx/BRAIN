@@ -14,7 +14,6 @@ import fastifySwaggerUI from "@fastify/swagger-ui";
 import fastifyHealthcheck from "fastify-healthcheck";
 import configureJWT from "./config/session";
 // import WebSocketPlugin from '@fastify/websocket';
-import { WebSocketServer } from "ws";
 
 config();
 
@@ -52,14 +51,17 @@ server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
 
+configureJWT(server);
 server.log.info("Registering plugins..");
 server
 	.register(fastifyAutoload, {
 		dir: join(__dirname, "plugins"),
+		autoHooks: true
 	})
 	.after(() => {
 		server.log.info("All plugins are ready");
 	});
+
 
 // server.log.info("Registering middlewares..");
 // server
@@ -73,25 +75,7 @@ server
 // server.register(WebSocketPlugin).after(() => {
 // 	server.log.info("WebSocket is Ready")
 // })
-const wss = new WebSocketServer({port:8081})
-wss.on('connection', (ws) => {
-    console.log('Client connected');
 
-    // Send a message to the newly connected client
-    ws.send('Welcome to the WebSocket server!');
-
-    // Handle incoming messages from the client
-    ws.on('message', (message) => {
-        console.log(`Received: ${message}`);
-        // Echo the message back to the client
-        ws.send(`You said: ${message}`);
-    });
-
-    // Handle client disconnection
-    ws.on('close', () => {
-        console.log('Client disconnected');
-    });
-});
 server
 	.register(fastifySwagger, {
 		openapi: {
@@ -136,7 +120,6 @@ server
 		server.log.info("Health check registered");
 	});
 
-configureJWT(server);
 server
 	.register(fastifyAutoload, {
 		dir: join(__dirname, "routes"),

@@ -2,31 +2,13 @@ import { WebSocket } from "@fastify/websocket";
 import { channelHandlers, channelsType, unknownChannelHandler } from "./agent"
 import { ChannelsSchema } from "src/routes/ws/channels";
 import { FastifyRequest } from "fastify";
-import { redis } from "src/config/redis";
-import { ConnectionMetadata, connectionStore } from "src/config/connectionStore";
+// import { redis } from "src/config/redis";
+// import { connectionStore } from "src/config/connectionStore";
 
 type channelsTypeKeys = keyof channelsType;
 
 
 export async function handleWebSocket(connection: WebSocket, req: FastifyRequest) {
-	const role = req.user.role
-	const userId = req.user.id
-	const socketId = `${role}-${userId}`
-	connectionStore.set(socketId, connection)
-
-	const metadata: ConnectionMetadata = {
-		userId,
-		role,
-		connectedAt: new Date(),
-		status: 'connected'
-	}
-
-	try {
-		await redis.set(socketId, JSON.stringify(metadata))
-		req.log.info(`Stored connection metadata for ${socketId}`)
-	} catch (error) {
-		req.log.error(`Failed to store connection metadata: ${error}`)
-	}
 
 	connection.on('message', (message: string) => {
 		try {
@@ -53,11 +35,11 @@ export async function handleWebSocket(connection: WebSocket, req: FastifyRequest
 	})
 
 	connection.on('close', async () => {
-		connectionStore.delete(socketId)
+		// connectionStore.delete(socketId)
 
 		try {
-			await redis.del(socketId)
-			req.log.info(`Deleted connection metadata for ${socketId}`)
+			// await redis.del(socketId)
+			// req.log.info(`Deleted connection metadata for ${socketId}`)
 		} catch (error) {
 			req.log.error(`Failed to delete connection metadata: ${error}`)
 		}

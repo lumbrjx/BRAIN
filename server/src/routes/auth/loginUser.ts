@@ -3,6 +3,7 @@ import { UserLoginSchema, UserLoginSchemaData } from "./model.def";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { RouteResponse } from "src/shared/models";
 import { loginUserService } from "src/services/loginUser";
+import jwt from "jsonwebtoken";
 
 export default async function(app: FastifyInstance) {
 	const server = app.withTypeProvider<ZodTypeProvider>();
@@ -31,12 +32,12 @@ export default async function(app: FastifyInstance) {
 				}
 
 				console.log(cx.data)
-				const token = req.jwt.sign({
+				const token = jwt.sign({
 					username: cx.data.username,
 					role: cx.data.role,
 					id: cx.data.id,
 					created_at: cx.data.created_at
-				});
+				}, process.env.SECRET, { expiresIn: "15d" });
 				// reply.setCookie(process.env.TOKEN_NAME, token, {
 				// 	path: "/",
 				// 	httpOnly: true,
