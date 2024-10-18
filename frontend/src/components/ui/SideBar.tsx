@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaTachometerAlt, FaCogs, FaUsers, FaTools, FaSignOutAlt, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 import { useAuth } from '@/auth/authWrapper';
+import { Link } from 'react-router-dom';
 const Sidebar: React.FC = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false); 
@@ -31,8 +32,8 @@ const Sidebar: React.FC = () => {
   }, []);
 
   const getHoverClass = () => {
-    if (isCollapsed && selected) return ''; // No hover effect if sidebar collapsed
-    return 'hover:bg-[#1A3DA3] hover:text-white'; 
+    if (isCollapsed && selected) return ''; 
+    return 'hover:bg-[#1A3DA3] hover:opacity-80 hover:text-white'; 
   };
 
   const getSelectedClass = (item: string) => {
@@ -41,7 +42,7 @@ const Sidebar: React.FC = () => {
     const auth = useAuth();
   return (
     <div
-      className={`h-screen bg-slate-200 text-[#808191] flex flex-col justify-between items-center transition-all duration-300 ${
+      className={`h-screen bg-[#F5F5F5] text-md text-[#808191] flex flex-col justify-between items-center transition-all duration-300 ${
         isCollapsed ? 'w-16' : 'w-1/6'
       }`}
     >
@@ -53,44 +54,46 @@ const Sidebar: React.FC = () => {
         {isCollapsed ? <FaAngleRight /> : <FaAngleLeft />}
       </button>
 
-      <ul className="space-y-2 mt-8">
-        <li
-          className={`flex items-center rounded-[10px] cursor-pointer pr-5 pl-5 pt-1 pb-1 transition duration-200 ${getSelectedClass('dashboard')} ${getHoverClass()}`}
+      <ul className="space-y-2 mt-8 px-4 w-full">
+        <Link
+        to={"/"}
+          className={`flex w-full items-center rounded-[10px] cursor-pointer pr-5 pl-5 py-4 transition duration-200 ${getSelectedClass('dashboard')} ${getHoverClass()}`}
           onClick={() => handleItemClick('dashboard')}
         >
           <FaTachometerAlt className="mr-2" />
           <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>Dashboard</span>
-        </li>
-        <li
-          className={`flex items-center rounded-[10px] cursor-pointer pr-5 pl-5 pt-1 pb-1 transition duration-200 ${getSelectedClass('machines')} ${getHoverClass()}`}
+        </Link>
+        <Link
+        to={"/machines"}
+          className={`flex items-center rounded-[10px] cursor-pointer pr-5 pl-5 py-4 transition duration-200 ${getSelectedClass('machines')} ${getHoverClass()}`}
           onClick={() => handleItemClick('machines')}
         >
           <FaTools className="mr-2" />
           <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>Machines</span>
-        </li>
-        <li
-          className={`flex items-center rounded-[10px] cursor-pointer pr-5 pl-5 pt-1 pb-1 transition duration-200 ${getSelectedClass('workers')} ${getHoverClass()}`}
+        </Link>
+        <Link
+        to={"/workers"}
+          className={`flex items-center rounded-[10px] cursor-pointer pr-5 pl-5 py-4 transition duration-200 ${getSelectedClass('workers')} ${getHoverClass()}`}
           onClick={() => handleItemClick('workers')}
         >
           <FaUsers className="mr-2" />
           <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>Workers</span>
-        </li>
+        </Link>
       </ul>
 
-      <ul className="space-y-2 mb-8">
+      <ul className="space-y-2 w-full mb-8 px-4">
         <li
-          className={`flex items-center rounded-[10px] cursor-pointer pr-5 pl-5 pt-1 pb-1 transition duration-200 ${getSelectedClass('settings')} ${getHoverClass()}`}
+          className={`flex items-center rounded-[10px] cursor-pointer pr-5 pl-5 py-4 transition duration-200 ${getSelectedClass('settings')} ${getHoverClass()}`}
           onClick={() => handleItemClick('settings')}
         >
           <FaCogs className="mr-2" />
           <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>Settings</span>
         </li>
         <li
-          className={`flex items-center rounded-[10px] cursor-pointer pr-10 pl-5 pt-1 pb-1 transition duration-200 ${getSelectedClass('logout')} ${getHoverClass()}`}
-          onClick={() => handleItemClick('logout')}
-        >
+          className={`flex items-center rounded-[10px] cursor-pointer pr-10 pl-5 py-4 transition duration-200 ${getSelectedClass('logout')} ${getHoverClass()}`}
+          onClick={auth.logout}        >
           <FaSignOutAlt className="mr-2" />
-          <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}  onClick={auth.logout}>Log Out</span>
+          <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>Log Out</span>
         </li>
       </ul>
     </div>
