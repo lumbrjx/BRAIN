@@ -1,7 +1,8 @@
 // App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from '@/pages/login'; 
+
+import Login from './components/ui/Login'
 import Workers from '@/pages/workers'
 import Machines from '@/pages/machines'
 const App: React.FC = () => {
