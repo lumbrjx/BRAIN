@@ -1,7 +1,17 @@
-import React from 'react'
+import { useAuth } from "@/auth/authWrapper";
+export default function mchines(){
+  const { username, role, logout } = useAuth();
 
-export default function machines() {
+
   return (
-    <div>machines</div>
-  )
-}
+    <div>
+      <h1>Welcome {username}!</h1>
+      <p>Your role is: {role}</p>
+      
+      {role === 'SUPERUSER' && (
+        <div>Special admin controls here</div>
+      )}
+    </div>
+  );
+};
+

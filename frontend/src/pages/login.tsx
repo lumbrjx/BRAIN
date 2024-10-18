@@ -1,6 +1,6 @@
-
+import Login from "@/components/ui/Login"
 export default function login() {
   return (
-    <div>login</div>
+    <div><Login/></div>
   )
 }

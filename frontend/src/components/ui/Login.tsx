@@ -1,55 +1,104 @@
 import React, { useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/auth/authWrapper';
 
 const LoginComponent = () => {
-    const [Username, setUsername] = useState<string>('');
-    const [Password, setPassword] = useState<string>('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { updateUser } = useAuth();
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        // logique ?
-    };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError('');
+    setIsLoading(true);
 
-    return (
-        <div className="w-[450px] bg-white flex justify-center items-center rounded-[10px] p-4 shadow-sm">
-            <form onSubmit={handleSubmit}>
-                <h2 className="text-TextBlack text-2xl mb-4 text-center font-bold">Login</h2>
-                <div className="user mb-2">
-                    <label htmlFor="username" className="block text-TextBlack mb-1 font-sans">
-                        Username
-                    </label>
-                    <input
-                        type="text"
-                        id="username"
-                        required
-                        value={Username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className='w-[350px] h-[40px] border border-gray-300 rounded-[10px] px-2 py-1 text-[13px]'
-                        placeholder = "XXXXXXXX"
-                    />
-                </div>
-                <div className="password mb-5">
-                    <label htmlFor="password" className="block text-TextBlack mb-1">
-                        Password
-                    </label>
-                    <input
-                        type="password"
-                        id="password"
-                        required
-                        value={Password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className='w-full h-[40px] border border-gray-300 rounded-[10px] px-2 py-1 text-[13px]'
-                        placeholder='**********'
-                    />
-                </div>
-                <button
-                    type="submit"
-                    className="bg-Gray text-white w-full rounded-[10px] h-[40px] hover:bg-gray-600 font-bold"
-                >
-                    Sign In
-                </button>
-            </form>
+    try {
+      const response = await fetch('https://brain-production-0450.up.railway.app/api/v1/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const responseData = await response.json();
+
+      if (!responseData.success) {
+        throw new Error(responseData.message || 'Login failed');
+      }
+
+      localStorage.setItem('token', responseData.data.token);
+      
+      updateUser(
+        responseData.data.user.username,
+        responseData.data.user.role,
+        responseData.data.token
+      );
+
+      navigate('/');
+      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred during login');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <h2 className="text-2xl font-bold text-center text-gray-900">Login</h2>
+        
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <div>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            required
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            placeholder="Enter your username"
+          />
         </div>
-    );
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            placeholder="Enter your password"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full rounded-md bg-blue-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? 'Signing in...' : 'Sign In'}
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default LoginComponent;

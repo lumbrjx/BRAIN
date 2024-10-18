@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaTachometerAlt, FaCogs, FaUsers, FaTools, FaSignOutAlt, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
-
+import { useAuth } from '@/auth/authWrapper';
 const Sidebar: React.FC = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false); 
@@ -38,7 +38,7 @@ const Sidebar: React.FC = () => {
   const getSelectedClass = (item: string) => {
     return window.innerWidth >= 870 && selected === item ? 'bg-[#1A3DA3] text-white' : '';
   };
-
+    const auth = useAuth();
   return (
     <div
       className={`h-screen bg-slate-200 text-[#808191] flex flex-col justify-between items-center transition-all duration-300 ${
@@ -90,7 +90,7 @@ const Sidebar: React.FC = () => {
           onClick={() => handleItemClick('logout')}
         >
           <FaSignOutAlt className="mr-2" />
-          <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>Log Out</span>
+          <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}  onClick={auth.logout}>Log Out</span>
         </li>
       </ul>
     </div>
