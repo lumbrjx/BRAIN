@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/auth/authWrapper";
 
 interface Machine {
     name : string,
@@ -19,12 +20,21 @@ interface machinesResponse {
     ok :string,
     message : Machine[],
 }
-const getMachines = async (): Promise<machinesResponse> => {
-    const posts = await (await axios.get('https://brain-production-0450.up.railway.app/api/v1/machines'))?.data;
-    return posts;
-  }
 
 export function MachinesTable() {
+    const {token} = useAuth();
+    const getMachines = async (): Promise<machinesResponse> => {
+      const posts = await (
+        await axios.get('https://76fc-105-235-139-169.ngrok-free.app/api/v1/machines', {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        })
+      )?.data;
+      
+      return posts;
+    }
+    
     const { data:machines, isLoading, error } = useQuery({
         queryKey: ['machines'],
         queryFn: getMachines,
