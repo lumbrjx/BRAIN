@@ -38,18 +38,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 server
-  .register(cors, {
-    origin: "https://xxxx-xx-xx-xx.ngrok-free.app", // Ngrok isn't the best thing to add here but it is what it is
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],  
-    credentials: true,
-    preflight: true,  // Added to handle OPTIONS requests
-    maxAge: 86400,    // Cache preflight results for 24 hours
-    exposedHeaders: ["Content-Range", "X-Content-Range"],  // Added for better client-side handling
-  })
-  .after(() => {
-    server.log.info("CORS enabled with origin: https://xxxx-xx-xx-xx.ngrok-free.app");
-  });
+	.register(cors, {
+		origin: "*",
+		methods: ["GET", "POST", "PUT", "DELETE"],
+		// allowedHeaders: ["Content-Type", "Authorization"],
+		credentials: true,
+	})
+	.after(() => {
+		server.log.info("Cors enabled");
+	});
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
@@ -75,7 +72,7 @@ server
 				version: "1.0.0",
 			},
 			servers: [],
-			
+
 		},
 		transform: jsonSchemaTransform,
 	})

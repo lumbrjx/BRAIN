@@ -19,7 +19,7 @@ export function scheduleJobAfterHours(delayInHours: number, jobCallback: any) {
 
 
 	const runTime = new Date(Date.now() + delayInHours * 1000); // we fixed the duration with seconds. in real life scenarios, it should be 
-																// with hours, days..
+	// with hours, days..
 	console.log(`Job scheduled to run at: ${runTime}`);
 
 	schedule.scheduleJob(runTime, () => {
@@ -44,16 +44,17 @@ function processTaskQueue() {
 					timesc: time.toISOString()
 				})
 				scheduleJobAfterHours(Math.floor(Math.random() * 5) + 1, async () => {
-					await redis.publish("ALERT_CHANNEL", JSON.stringify({ type: "JOB", data: job.task }))
 					console.log("published task")
 					await db.transaction(async (tx) => {
 						await tx.delete(schema.jobs).where(eq(schema.jobs.machine_id, job.machine_id))
 						await tx.update(schema.machines).set({ state: "UNDER_MAINTENENCE" }).where(eq(schema.machines.name, job.machine_id))
-
 					})
+					await redis.publish("ALERT_CHANNEL", JSON.stringify({ type: "JOB", data: job.task }))
+
 					console.log("finished task")
 
 				})
+				console.log("aaaaaaaaaaaaaaaa")
 				await redis.publish("ALERT_CHANNEL", JSON.stringify({ type: "FLOG", data: `new job created: ${job.task}` }))
 
 

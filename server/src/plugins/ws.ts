@@ -9,6 +9,33 @@ import { payloadType } from "./authenticator";
 export const websocket = async (app: FastifyInstance) => {
 
 	const wss = new WebSocketServer({ server: app.server })
+	redisPubSub.subscribe("ALERT_CHANNEL")
+	redisPubSub.on('message', async (channel, message) => {
+		console.log(`Received message from channel ${channel}: ${message}`);
+
+		try {
+			const superUserKeys = await redis.keys('SUPERUSER-*');
+			const operatorKeys = await redis.keys('MAINTAINER-*');
+
+			const users = [...superUserKeys, ...operatorKeys];
+			const clients = users.map((user) => connectionStore.get(user));
+
+			if (!clients || clients.length === 0) {
+				console.log("No clients connected");
+				return;
+			}
+			console.log(clients.length)
+
+			clients.forEach((client) => {
+				if (client?.readyState === WebSocket.OPEN) {
+					client.send(message  );
+				}
+			});
+		} catch (e) {
+			console.error('Error sending message to clients:', e);
+		}
+
+	});
 
 	wss.on('connection', async (ws: WebSocket, req: FastifyRequest) => {
 		const authHeader = req.headers['sec-websocket-protocol'];
@@ -17,6 +44,7 @@ export const websocket = async (app: FastifyInstance) => {
 		}
 
 		let socketId: string;
+
 
 		try {
 			const decoded = jwt.verify(authHeader, process.env.SECRET)
@@ -43,32 +71,6 @@ export const websocket = async (app: FastifyInstance) => {
 		}
 
 
-
-		redisPubSub.on('message', async (channel, message) => {
-			console.log(`Received message from channel ${channel}: ${message}`);
-
-			try {
-				const superUserKeys = await redis.keys('SUPERUSER-*');
-				const operatorKeys = await redis.keys('MAINTAINER-*');
-
-				const users = [...superUserKeys, ...operatorKeys];
-				const clients = users.map((user) => connectionStore.get(user));
-
-				if (!clients || clients.length === 0) {
-					console.log("No clients connected");
-					return;
-				}
-
-				clients.forEach((client) => {
-					if (client?.readyState === WebSocket.OPEN) {
-						client.send(message);
-					}
-				});
-			} catch (e) {
-				console.error('Error sending message to clients:', e);
-			}
-		});
-		redisPubSub.subscribe("ALERT_CHANNEL")
 
 
 		ws.on('close', async () => {
