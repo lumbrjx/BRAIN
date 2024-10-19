@@ -14,6 +14,10 @@ export const machines= pgTable(
 		state: StateTypeEnum("stateTypeE").notNull().default("WORKING"),
 		info : text("info").notNull().default("no detected issues"),
 		created_at: timestamp("created_at").notNull().defaultNow(),
+
+	machine_id: text("machine_id")
+		.unique()
+		.references(() => machines.id, { onDelete: "cascade" }),
 	},
 	(table) => {
 		return {

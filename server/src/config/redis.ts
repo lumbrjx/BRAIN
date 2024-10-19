@@ -1,7 +1,3 @@
-import { Redis } from '@upstash/redis';
+import Redis from "ioredis"
 
-export const redis = new Redis({
-	url: process.env.REDIS_HOST,
-	token: process.env.REDIS_PASSWORD,
-})
-
+export const redis=  new Redis("rediss://default:AXsoAAIjcDE5ZjM3MDVmYzNmMjE0MmI4OGUyYWNmZDhjODQ0YjE0NHAxMA@humble-stud-31528.upstash.io:6379");

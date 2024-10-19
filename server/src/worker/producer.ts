@@ -3,13 +3,9 @@ import { config } from "dotenv";
 import Redis from 'ioredis';
 config()
 
-export const redis = new Redis({
-	host: process.env.REDIS_QUEUE,
+export const redis = new Redis(process.env.REDIS_QUEUE)
 
-})
-export const queue = new Queue('smartCarQueue', {
-	connection: redis
-});
+export const queue = new Queue('smartCarQueue');
 
 
 

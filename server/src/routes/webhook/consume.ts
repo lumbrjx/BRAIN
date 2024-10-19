@@ -3,6 +3,9 @@ import { RouteResponse } from "src/shared/models";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { redis } from "src/config/redis";
 import { connectionStore } from "src/config/connectionStore";
+// import { ObserveState } from "src/services/decision";
+// import { recordLogs } from "src/services/recordLogs";
+// import { getLogs } from "src/services/getLogs";
 
 export default async function(app: FastifyInstance) {
 	const server = app.withTypeProvider<ZodTypeProvider>();
@@ -45,6 +48,11 @@ export default async function(app: FastifyInstance) {
 						client.send(JSON.stringify(req.body))
 					}
 				})
+				// await recordLogs(req.body)
+				// await getLogs("stamping_press_001")
+								// await ObserveState(req.body)
+
+
 
 				console.log(req.body)
 				return reply.status(200).send({
