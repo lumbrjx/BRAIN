@@ -1,7 +1,7 @@
 <h1 align="center">DevFest 2024 B.R.A.I.N 2nd Challenge: Smart Analytics Platform for Car Manufacturing Operations</h1>
 
 <p align="center">
-  <img src="./assets/prev.jpg" />
+  <img src="./assets/prev.png" />
 </p>
 
 ## Overview
