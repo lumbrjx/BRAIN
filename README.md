@@ -7,6 +7,14 @@
 ## Overview
 The Smart Analytics Platform is a sophisticated monitoring and predictive maintenance system designed for car manufacturing operations. It combines real-time monitoring, AI-powered predictions, and automated maintenance scheduling to ensure optimal manufacturing performance and reduce downtime.
 
+### explanation videos:
+
+https://drive.google.com/file/d/1QiAB8Cv45ZtDS3_bFgW0FTSoHS4JOcCU/view?usp=drive_link
+
+https://drive.google.com/file/d/1pqOwxWTvZxQOSLJSNB3HizGkTxXexs7x/view?usp=sharing
+
+https://drive.google.com/file/d/1E6ZfF8D_4wYiQdcxbWL2OVIrU9637VA7/view?usp=sharing
+
 ## System Architecture
 
 ### Core Components
