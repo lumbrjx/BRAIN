@@ -1,0 +1,27 @@
+##[pylyzer] failed /home/lumbrjx/Projects/important/B.R.A.I.N/Ai/Host.py 1729345274 1696
+.___v_desugar_1 = pyimport "Failure"
+.Failure = pyimport "Failure"
+.Flask: Never
+.request: Never
+.jsonify: Never
+.torch = pyimport "Failure"
+
+
+.np = pyimport "Failure"
+
+
+.___v_desugar_2 = pyimport "model"
+.model = pyimport "model"
+.FailureWatch: {Training/model.FailureWatch}
+.app: Never
+.___v_global_903: Tuple([{9}, {1}, {0.0}])
+.num_features: {9}
+.num_classes: {1}
+.drop: {0.0}
+
+Training/model = pyimport "Training/model"
+.model: Training/model.FailureWatch
+
+
+.predict: () -> Never
+
