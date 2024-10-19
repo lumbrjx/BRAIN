@@ -4,10 +4,10 @@ import { useAuth } from '@/auth/authWrapper';
 
 interface ProtectedRouteProps {
   children: JSX.Element;
-  requiredRole: string;
+  allowedRoles?: string[];
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
   const { role, token } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -15,7 +15,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 100);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -23,8 +22,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
     return null;
   }
 
-  if (!token || role !== requiredRole) {
+  if (!token) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && allowedRoles.length > 0 && role  && !allowedRoles.includes(role)) {
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return children;

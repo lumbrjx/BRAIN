@@ -55,7 +55,7 @@ const LoginComponent = () => {
         
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>Wrong credentials</AlertDescription>
           </Alert>
         )}
 
