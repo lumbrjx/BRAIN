@@ -12,6 +12,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 pg-ssl
 local.txt
 
+pgdata
 
 # Runtime data
 pids

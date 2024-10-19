@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 config();
 const pool = new pg.Pool({
 	connectionString: process.env.POSTGRES_URL,
-	ssl: true
+	ssl: false
 });
 
 const db = drizzle(pool);
@@ -23,18 +23,18 @@ const Machines = [
 
 
 async function main() {
-	// try {
-	// 	console.log("seeding users...");
-	// 	const data = await bcrypt.hash("superuser", 10)
-	// 	await db.insert(users).values({ username: "superuser", role: "SUPERUSER", password: data });
-	// 	console.log("users created successfully");
-	// } catch (err) {
-	// 	console.log(err)
-	// }
+	try {
+		console.log("seeding users...");
+		const data = await bcrypt.hash("superuser", 10)
+		await db.insert(users).values({ username: "superuser", role: "SUPERUSER", password: data });
+		console.log("users created successfully");
+	} catch (err) {
+		console.log(err)
+	}
 	try {
 
 		console.log("seeding machines...");
-		for (let machine of Machines){
+		for (let machine of Machines) {
 			await db.insert(machines).values({ name: machine });
 		}
 

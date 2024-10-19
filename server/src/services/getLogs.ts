@@ -1,5 +1,8 @@
 import { client } from "src/config/influxClient";
 
+const BUCKET = 'machines_logs'
+const ORG = 'myorg'
+
 const Machines = [
 	'stamping_press_001',
 	'painting_robot_002',
@@ -9,88 +12,92 @@ const Machines = [
 	'welding_robot_006'
 ];
 
-export async function getLogs(machine_id: string) {
-	console.log(machine_id)
+export async function getLogs(machine_id: string): Promise<any[]> {
 	if (!Machines.includes(machine_id)) {
 		console.log('Invalid machine ID');
-		return 'Invalid machine ID'
+		throw new Error('Invalid machine ID');
 	}
 
-	const query = `
-    SELECT *
-    FROM ${machine_id}
-    WHERE time >= now() - interval '15 minutes'
-  `;
+	const queryClient = client.getQueryApi(ORG)
 
-	const rows = client.query(query, 'machines_logs');
+	// Using Flux query language for InfluxDB 2.x
+	const fluxQuery = `
+        from(bucket: "${BUCKET}")
+            |> range(start: -15m)
+            |> filter(fn: (r) => r._measurement == "${machine_id}")
+            |> pivot(rowKey:["_time"], 
+                    columnKey: ["_field"], 
+                    valueColumn: "_value")
+    `
 
-	const columns = [
-		'atomizer_speed',
-		'booth_airflow_velocity',
-		'chip_load',
-		'coolant_flow_rate',
-		'cut_depth',
-		'cycle_count',
-		'cycle_time',
-		'die_alignment',
-		'feed_rate',
-		'fluid_type',
-		'force_applied',
-		'gas_flow_rate',
-		'humidity',
-		'leak_rate',
-		'lubrication_flow_rate',
-		'material_hardness',
-		'noise_level',
-		'oil_pressure',
-		'overspray_capture_efficiency',
-		'paint_flow_rate',
-		'paint_thickness',
-		'paint_volume_used',
-		'power_consumption',
-		'pressure_applied',
-		'pressure_drop',
-		'seal_condition',
-		'sheet_thickness',
-		'solvent_concentration',
-		'spindle_speed',
-		'spray_pressure',
-		'status',
-		'temperature',
-		'test_cycle_count',
-		'test_duration',
-		'test_pressure',
-		'time',
-		'tool_wear_level',
-		'vibration_level',
-		'weld_current',
-		'weld_strength_estimate',
-		'weld_temperature',
-		'weld_time',
-		'weld_voltage',
-		'wire_feed_rate',
-	];
+	return new Promise((resolve, reject) => {
+		const allLogs: any[] = []
 
-	const allLogs = [];
+		queryClient.queryRows(fluxQuery, {
+			next: (row, tableMeta) => {
+				const rowData = tableMeta.toObject(row)
+				const logEntry = {
+					time: new Date(rowData['_time']),
+					...Object.keys(rowData)
+						.filter(key =>
+							!key.startsWith('_') &&
+							rowData[key] !== null &&
+							rowData[key] !== undefined &&
+							rowData[key] !== ''
+						)
+						.reduce((acc, key) => ({
+							...acc,
+							[key]: rowData[key]
+						}), {})
+				}
 
-	for await (const row of rows) {
-		const logEntry: any = {
-			time: new Date(row['time']),
-		};
-
-		columns.forEach(column => {
-			const value = row[column];
-			if (value !== undefined && value !== null && value !== '') {
-				logEntry[column] = value;
-			}
-		});
-
-		if (Object.keys(logEntry).length > 1) {
-			allLogs.push(logEntry);
-		}
-	}
-
-	return allLogs;
+				if (Object.keys(logEntry).length > 1) {
+					allLogs.push(logEntry)
+				}
+			},
+			error: (error) => {
+				console.error('Error querying data:', error)
+				reject(error)
+			},
+			complete: () => {
+				resolve(allLogs)
+			},
+		})
+	})
 }
 
+// Helper function to test the connection
+export async function testInfluxConnection(): Promise<boolean> {
+	try {
+		const queryClient = client.getQueryApi(ORG)
+		const fluxQuery = `from(bucket: "${BUCKET}") |> range(start: -1m) |> limit(n: 1)`
 
+		return new Promise((resolve, reject) => {
+			queryClient.queryRows(fluxQuery, {
+				next: () => {
+					resolve(true)
+				},
+				error: (error) => {
+					console.error('Connection test failed:', error)
+					reject(error)
+				},
+				complete: () => {
+					resolve(true)
+				},
+			})
+		})
+	} catch (error) {
+		console.error('Connection test failed:', error)
+		return false
+	}
+}
+
+// Usage example:
+/*
+try {
+    const logs = await getLogs('stamping_press_001')
+    console.log('Retrieved logs:', logs)
+} catch (error) {
+    console.error('Error getting logs:', error)
+}
+*/

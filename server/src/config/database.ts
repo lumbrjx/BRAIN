@@ -4,7 +4,7 @@ import * as schema from "../database/schema";
 
 export const pool = new pg.Pool({
 	connectionString: process.env.POSTGRES_URL,
-	ssl: true 
+	ssl: false 
 });
 
 

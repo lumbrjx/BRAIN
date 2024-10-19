@@ -1,23 +1,24 @@
-import { Point } from "@influxdata/influxdb3-client"
+import { Point } from "@influxdata/influxdb-client"
 import { client } from "src/config/influxClient";
 
 export async function recordLogs(jsonData: any) {
-	const point = Point.measurement(jsonData.machine_id);
+	console.log(process.env.INFLUXDB_TOKEN)
+	const point = new Point(jsonData.machine_id);
 
 	for (const [key, value] of Object.entries(jsonData)) {
 		if (key !== 'machine_id' && key !== 'timestamp') {
 			if (typeof value === 'boolean') {
-				point.setBooleanField(key, value);
+				point.booleanField(key, value);
 			} else if (typeof value === 'string') {
-				point.setStringField(key, value);
+				point.stringField(key, value);
 			} else if (typeof value === 'number') {
-				point.setFloatField(key, value);
+				point.floatField(key, value);
 			}
 		}
 	}
 
-	point.setTimestamp(new Date(jsonData.timestamp));
-	await client.write(point, "machines_logs")
+	point.timestamp(new Date(jsonData.timestamp));
+	client.getWriteApi("myorg", "machines_logs", 'ns').writePoint(point)
 
 }
 

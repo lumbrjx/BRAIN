@@ -1,0 +1,70 @@
+services:
+  # reverse-proxy:
+  #   image: traefik:v3.1
+  #   command:
+  #     - "--providers.docker"
+  #     - "--providers.docker.exposedbydefault=false"
+  #     - "--api.insecure=true"
+  #     - "--entrypoints.web.address=:80"
+  #   ports:
+  #     - "80:80"
+  #     - "8080:8080"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   restart: unless-stopped
+  #
+  # server:
+  #   image: lumbrjx/smartcar:1.0.7 
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.izar-server.rule=Host(`localhost`)"
+  #     - "traefik.http.routers.izar-server.entrypoints=web"
+  #     - "traefik.http.services.izar-server.loadbalancer.server.port=3000"
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - database
+    
+  database:
+    image: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    # environment:
+    #   REDIS_URL: ${REDIS_HOST}
+    restart: unless-stopped
+
+  influxdb:
+    image: influxdb:latest
+    ports:
+      - "8086:8086"
+    environment:
+       DOCKER_INFLUXDB_INIT_MODE: setup
+       DOCKER_INFLUXDB_INIT_USERNAME: admin
+       DOCKER_INFLUXDB_INIT_PASSWORD: adminpassword
+       DOCKER_INFLUXDB_INIT_ORG: myorg
+       DOCKER_INFLUXDB_INIT_BUCKET: machines_logs
+       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: mypassword
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  influxdb_data:
+

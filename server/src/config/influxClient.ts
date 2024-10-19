@@ -1,9 +1,11 @@
-import { InfluxDBClient } from '@influxdata/influxdb3-client'
+import { InfluxDB } from '@influxdata/influxdb-client'
 
-export const client = new InfluxDBClient({
-	host: process.env.INFLUX_URL,
+export const client = new InfluxDB({
+	url: process.env.INFLUX_URL,
 	token: process.env.INFLUXDB_TOKEN
 })
+
+
 
 
 
