@@ -10,7 +10,7 @@ import { eq } from "drizzle-orm";
 config()
 export const pool = new pg.Pool({
 	connectionString: process.env.POSTGRES_URL,
-	ssl: true
+	ssl: false 
 });
 export const db = drizzle(pool, { schema });
 export const redis = new Redis(process.env.REDIS_HOST);

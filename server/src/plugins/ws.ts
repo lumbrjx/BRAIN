@@ -12,16 +12,17 @@ export const websocket = async (app: FastifyInstance) => {
 
 	wss.on('connection', async (ws: WebSocket, req: FastifyRequest) => {
 		console.log(process.env.SECRET)
-		const authHeader = req.headers['authorization'];
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		const authHeader = req.headers['sec-websocket-protocol'];
+		if (!authHeader) {
 			return ws.close(4000, "Authentication required")
 		}
-		const token = authHeader.substring(7);
+		// const token = authHeader.substring(7);
 
 		let socketId: string;
+		console.log(authHeader)
 
 		try {
-			const decoded = jwt.verify(token, process.env.SECRET)
+			const decoded = jwt.verify(authHeader, process.env.SECRET)
 			console.log("auth token", decoded);
 			req.user = decoded as payloadType;
 			const role = req.user.role
