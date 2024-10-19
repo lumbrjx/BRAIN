@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { UserSchema, UserSchemaData } from "./model.def";
-
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { RouteResponse } from "src/shared/models";
 import { createUserService } from "src/services/createUser";

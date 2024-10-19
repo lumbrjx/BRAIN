@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// -- /,get,metrics,body,getMetrics
 export const IdSchema = z.object({
   id: z.string().max(100),
 });

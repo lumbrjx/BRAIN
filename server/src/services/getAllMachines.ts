@@ -12,12 +12,9 @@ const getAllMachines = async () => {
 
 export async function getAllMachinesService(): Promise<Result<MachinesSchemaData[] | boolean | undefined, Error | string | undefined>> {
 	try {
-
 		const machines = await getAllMachines();
-
 		return parseToResult(machines);
 	} catch (error) {
-
 		console.log(error)
 		return parseToResult(undefined, "INTERNAL SERVER ERROR");
 	}

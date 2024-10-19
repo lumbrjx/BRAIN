@@ -10,13 +10,16 @@ import { eq } from "drizzle-orm";
 config()
 export const pool = new pg.Pool({
 	connectionString: process.env.POSTGRES_URL,
-	ssl: false 
+	ssl: false
 });
 export const db = drizzle(pool, { schema });
 export const redis = new Redis(process.env.REDIS_HOST);
 
 export function scheduleJobAfterHours(delayInHours: number, jobCallback: any) {
-	const runTime = new Date(Date.now() + delayInHours * 1000);
+
+
+	const runTime = new Date(Date.now() + delayInHours * 1000); // we fixed the duration with seconds. in real life scenarios, it should be 
+																// with hours, days..
 	console.log(`Job scheduled to run at: ${runTime}`);
 
 	schedule.scheduleJob(runTime, () => {
@@ -51,7 +54,7 @@ function processTaskQueue() {
 					console.log("finished task")
 
 				})
-				await redis.publish("ALERT_CHANNEL", JSON.stringify({ type: "LOG", data: `new job created: ${job.task}` }))
+				await redis.publish("ALERT_CHANNEL", JSON.stringify({ type: "FLOG", data: `new job created: ${job.task}` }))
 
 
 

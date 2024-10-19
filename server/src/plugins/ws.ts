@@ -11,19 +11,15 @@ export const websocket = async (app: FastifyInstance) => {
 	const wss = new WebSocketServer({ server: app.server })
 
 	wss.on('connection', async (ws: WebSocket, req: FastifyRequest) => {
-		console.log(process.env.SECRET)
 		const authHeader = req.headers['sec-websocket-protocol'];
 		if (!authHeader) {
 			return ws.close(4000, "Authentication required")
 		}
-		// const token = authHeader.substring(7);
 
 		let socketId: string;
-		console.log(authHeader)
 
 		try {
 			const decoded = jwt.verify(authHeader, process.env.SECRET)
-			console.log("auth token", decoded);
 			req.user = decoded as payloadType;
 			const role = req.user.role
 			const userId = req.user.id
@@ -38,7 +34,6 @@ export const websocket = async (app: FastifyInstance) => {
 			}
 			await redis.set(socketId, JSON.stringify(metadata))
 			console.log(`Stored connection metadata for ${socketId}`)
-
 			console.log('Client connected');
 
 
@@ -76,15 +71,7 @@ export const websocket = async (app: FastifyInstance) => {
 		redisPubSub.subscribe("ALERT_CHANNEL")
 
 
-		// ws.on('message', (message: any) => {
-		// 	console.log(`Received: ${message}`);
-		// 	// Echo the message back to the client
-		// 	ws.send(`You said: ${message}`);
-		// });
-
-		// Handle client disconnection
 		ws.on('close', async () => {
-			console.log('Client disconnected');
 			connectionStore.delete(socketId)
 
 			try {

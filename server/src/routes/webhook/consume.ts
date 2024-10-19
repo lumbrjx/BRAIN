@@ -16,7 +16,7 @@ export default async function(app: FastifyInstance) {
 		{
 			schema: {
 				description: "machines callback consumer",
-				tags: ["Core"],
+				tags: ["core"],
 				response: {
 					400: RouteResponse,
 					401: RouteResponse,
@@ -29,7 +29,7 @@ export default async function(app: FastifyInstance) {
 			reply: FastifyReply,
 		) {
 			try {
-
+				// needs api key for protection, sadly DevFest webhook doesnt provide this.
 				const superUserKeys = await redis.keys('SUPERUSER-*');
 				const operatorKeys = await redis.keys('OPERATOR-*');
 
@@ -53,6 +53,7 @@ export default async function(app: FastifyInstance) {
 				clients.forEach(client => {
 					if (client?.readyState === 1) {
 						client.send(JSON.stringify({ data: bd, type: data.predicted === "no Fail" ? "LOG" : "ALERT" }))
+						 // client.send(JSON.stringify({ data: bd, type:  "LOG"  }))
 					}
 				})
 				await recordLogs(req.body)
@@ -64,7 +65,7 @@ export default async function(app: FastifyInstance) {
 					success: true, data: req.body
 
 				});
-			} catch (error: any) {
+			} catch (err) {
 				return reply
 					.status(500)
 					.send({ ok: false, message: "Internal Server Error" });

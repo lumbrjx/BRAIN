@@ -43,7 +43,6 @@ const authenticator = async (app: FastifyInstance) => {
 
 			try {
 				const decoded = jwt.verify(token, process.env.SECRET);
-				console.log("auth token", decoded);
 				req.user = decoded as payloadType;
 			} catch (error) {
 				return reply

@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-const url = 'https://92de-41-98-245-61.ngrok-free.app/predict';
 export function extractNumericValues(obj: any) {
 	const values = Object.values(obj);
 
@@ -16,7 +15,7 @@ export function extractNumericValues(obj: any) {
 
 export async function predict(params: any) {
 	try {
-		const response = await axios.get(url, { params });
+		const response = await axios.get(process.env.AI_URL, { params });
 		console.log('Response data:', response.data);
 		return response.data;
 	} catch (error) {

@@ -14,10 +14,7 @@ export async function createUserService(
 ): Promise<Result<any | boolean | undefined, Error | string | undefined>> {
 	try {
 		data = { ...data, password: await bcrypt.hash(data.password, 10) };
-
 		const user = await createUser(data);
-		console.log(user)
-
 		return parseToResult(user);
 	} catch (error) {
 

@@ -38,15 +38,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 server
-	.register(cors, {
-		origin: "*",
-		methods: ["GET", "POST", "PUT", "DELETE"],
-		// allowedHeaders: ["Content-Type", "Authorization"],
-		credentials: true,
-	})
-	.after(() => {
-		server.log.info("Cors enabled");
-	});
+  .register(cors, {
+    origin: "https://xxxx-xx-xx-xx.ngrok-free.app", // Ngrok isn't the best thing to add here but it is what it is
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],  
+    credentials: true,
+    preflight: true,  // Added to handle OPTIONS requests
+    maxAge: 86400,    // Cache preflight results for 24 hours
+    exposedHeaders: ["Content-Range", "X-Content-Range"],  // Added for better client-side handling
+  })
+  .after(() => {
+    server.log.info("CORS enabled with origin: https://xxxx-xx-xx-xx.ngrok-free.app");
+  });
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
@@ -63,44 +66,16 @@ server
 	});
 
 
-// server.log.info("Registering middlewares..");
-// server
-// 	.register(fastifyAutoload, {
-// 		dir: join(__dirname, "middlewares"),
-// 	})
-// 	.after(() => {
-// 		server.log.info("All middlewares are ready");
-// 	});
-// server.log.info("Registering WebSocket..");
-// server.register(WebSocketPlugin).after(() => {
-// 	server.log.info("WebSocket is Ready")
-// })
-
 server
 	.register(fastifySwagger, {
 		openapi: {
 			info: {
-				title: "smartcar api",
+				title: "carTech api",
 				description: "Api documentation",
 				version: "1.0.0",
 			},
 			servers: [],
-			components: {
-				schemas: {
-					message: {
-						description: "WebSocket message schema",
-						properties: {
-							data: {
-								type: "string"
-							},
-							channel: {
-								type: "string",
-								enum: ["join"],
-							}
-						}
-					},
-				}
-			}
+			
 		},
 		transform: jsonSchemaTransform,
 	})
