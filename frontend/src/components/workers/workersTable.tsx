@@ -52,12 +52,14 @@ export function WorkersTable() {
   const [role, setRole] = useState<string>("");
 
   const { token } = useAuth();
+  
+  const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN; 
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["workers", token],
     queryFn: async () => {
       const response = await axios.get<WorkersResponse>(
-        "https://38c1-105-235-139-169.ngrok-free.app/api/v1/users",
+        `${API_DOMAIN}/api/v1/users`,
         {
           headers: {
             "ngrok-skip-browser-warning": "69420",
@@ -103,7 +105,7 @@ export function WorkersTable() {
 
     try {
       const response = await axios.post(
-        "https://38c1-105-235-139-169.ngrok-free.app/api/v1/auth/register",
+        `${API_DOMAIN}/api/v1/auth/register`, 
         newWorker,
         {
           headers: {

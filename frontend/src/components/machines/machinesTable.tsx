@@ -8,45 +8,56 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/auth/authWrapper"; 
 
 interface Machine {
-    name: string;
-    state: string;
-    info: string;
-    created_at: string;
+  name: string;
+  state: string;
+  info: string;
+  created_at: string;
 }
 
 interface MachinesResponse {
-    ok: string;
-    message: Machine[];
+  ok: string;
+  message: Machine[];
 }
 
-
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVydXNlciIsInJvbGUiOiJTVVBFUlVTRVIiLCJpZCI6IjY0N2Q2YWJlLTg2Y2QtNDc5MC1iOTQ4LWQxM2YwMmMxYmZiMSIsImNyZWF0ZWRfYXQiOiIyMDI0LTEwLTE4VDAwOjEzOjI3Ljk2OFoiLCJpYXQiOjE3MjkyODI0NDIsImV4cCI6MTczMDU3ODQ0Mn0.KyMKt59NEuSUzu_T0i3yEs6nsUGZ41-HjUGeVvJJNdA"
-
-const getMachines = async (): Promise<MachinesResponse> => {
+const getMachines = async (apiDomain: string, token: string): Promise<MachinesResponse> => {
   try {
-    const response = await axios.get('https://38c1-105-235-139-169.ngrok-free.app/api/v1/machines', {
+    const response = await axios.get(`${apiDomain}/api/v1/machines`, {
       headers: {
         "ngrok-skip-browser-warning": "69420",
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response.data)
+    console.log(response.data);
     return response.data; 
   } catch (error) {
-    throw new Error(`Failed to fetch machines`);
+    throw new Error(`Failed to fetch machines: ${error}`);
   }
 };
 
 export function MachinesTable() {
+  const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
+
+  if (!API_DOMAIN) {
+    throw new Error("API_DOMAIN environment variable is not defined.");
+  }
+
+  const { token } = useAuth(); 
+
+  if (!token) {
+    throw new Error("Token is not available."); 
+  }
+
   const { data: machines, isLoading, error } = useQuery({
     queryKey: ['machines'],
-    queryFn: getMachines,
+    queryFn: () => getMachines(API_DOMAIN, token), 
+    enabled: !!token
   });
 
   if (isLoading) return <div>Loading machines...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (error) return <div>Error: {(error as Error).message}</div>;
 
   return (
     <div className="bg-[#F5F5F5] py-12 px-14 m-6 rounded-[14px]">

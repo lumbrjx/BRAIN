@@ -30,12 +30,13 @@ interface LeakRatePressureDropChartProps {
 const LeakRatePressureDropChart: React.FC<LeakRatePressureDropChartProps> = ({ token }) => {
   const [data, setData] = useState<DataPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
 
   useEffect(() => {
     const fetchData = async () => {
       if (token) {
         try {
-          const response = await axios.get('https://38c1-105-235-139-169.ngrok-free.app/api/v1/metrics?id=leak_test_005', {
+          const response = await axios.get(`${API_DOMAIN}/api/v1/metrics?id=leak_test_005`, {
             headers: {
               'ngrok-skip-browser-warning': '69420',
               Authorization: `Bearer ${token}`,

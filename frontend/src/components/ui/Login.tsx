@@ -15,9 +15,10 @@ const LoginComponent = () => {
     event.preventDefault();
     setError('');
     setIsLoading(true);
+    const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
 
     try {
-      const response = await fetch('https://38c1-105-235-139-169.ngrok-free.app/api/v1/auth/login', {
+      const response = await fetch(`${API_DOMAIN}/api/v1/auth/login`, {
         method: 'POST',
         headers: {
           'ngrok-skip-browser-warning': '69420',

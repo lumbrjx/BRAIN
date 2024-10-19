@@ -24,10 +24,11 @@ interface JobsResponse {
 }
 
 const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVydXNlciIsInJvbGUiOiJTVVBFUlVTRVIiLCJpZCI6IjY0N2Q2YWJlLTg2Y2QtNDc5MC1iOTQ4LWQxM2YwMmMxYmZiMSIsImNyZWF0ZWRfYXQiOiIyMDI0LTEwLTE4VDAwOjEzOjI3Ljk2OFoiLCJpYXQiOjE3MjkyODI0NDIsImV4cCI6MTczMDU3ODQ0Mn0.KyMKt59NEuSUzu_T0i3yEs6nsUGZ41-HjUGeVvJJNdA";
+const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
 
 const getJobs = async (): Promise<JobsResponse> => {
   try {
-    const response = await axios.get('https://38c1-105-235-139-169.ngrok-free.app/api/v1/jobs', {
+    const response = await axios.get(`${API_DOMAIN}/api/v1/jobs`, {
       headers: {
         "ngrok-skip-browser-warning": "69420",
         Authorization: `Bearer ${token}`,

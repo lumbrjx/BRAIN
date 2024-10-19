@@ -20,12 +20,13 @@ interface DataPoint {
 const cnc_miling: React.FC<{ token: string }> = ({ token }) => {
   const [data, setData] = useState<DataPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
 
   useEffect(() => {
     const fetchData = async () => {
       if (token) {
         try {
-          const response = await axios.get('https://38c1-105-235-139-169.ngrok-free.app/api/v1/metrics?id=cnc_milling_004', {
+          const response = await axios.get(`${API_DOMAIN}/api/v1/metrics?id=cnc_milling_004`, {
             headers: {
               'ngrok-skip-browser-warning': '69420',
               Authorization: `Bearer ${token}`,
