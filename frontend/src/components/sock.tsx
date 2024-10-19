@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/auth/authWrapper';
 import Card from './card';
+import { toast } from "sonner"
 
 type MachineData = {
   machine_id: string;
@@ -10,18 +11,15 @@ type MachineData = {
 const WebSocketConsoleLogger: React.FC = () => {
   const ws = useRef<WebSocket | null>(null);
   const { token } = useAuth();
-  
   const [leakTestData, setLeakTestData] = useState<[MachineData, string] | null>(null);
   const [stampingPressData, setStampingPressData] = useState<[MachineData, string] | null>(null);
   const [paintingRobotData, setPaintingRobotData] = useState<[MachineData, string] | null>(null);
   const [cncMillingData, setCncMillingData] = useState<[MachineData, string] | null>(null);
   const [weldingRobotData, setWeldingRobotData] = useState<[MachineData, string] | null>(null);
   const [agvData, setAgvData] = useState<[MachineData, string] | null>(null);
-  const [type, setType] = useState<string>("");
   useEffect(() => {
     if (!token) return;
-
-    const socketUrl = `wss://76fc-105-235-139-169.ngrok-free.app/api/v1/ws/channels?token=${token}`;
+    const socketUrl = `wss://38c1-105-235-139-169.ngrok-free.app/api/v1/ws/channels?token=${token}`;
     ws.current = new WebSocket(socketUrl, token);
 
     ws.current.onopen = () => {
@@ -30,12 +28,31 @@ const WebSocketConsoleLogger: React.FC = () => {
 
     ws.current.onmessage = (message: MessageEvent) => {
       const parsedData = JSON.parse(message.data);
-      setType(parsedData.type);
-      if(parsedData.type == "JOB"){ 
-        
-      }
-      const newData = parsedData.data.metrics;
       console.log(parsedData)
+      if(parsedData.type == "JOB"){ 
+        console.log(parsedData.type)
+        toast.error("JOB todo now", {
+          description: parsedData.data,
+          action: {
+            label: "Undo",
+            onClick: () => console.log("Undo"),
+          },
+        })
+
+    } 
+    
+    else if(parsedData.type == "FLOG"  ){ 
+      console.log(parsedData.type)
+      toast("JOB added for later", {
+        description: parsedData.data,
+        action: {
+          label: "Undo",
+          onClick: () => console.log("Undo"),
+        },
+      })
+  } 
+    else {
+      const newData = parsedData.data.metrics;
       switch (newData.machine_id) {
         case 'leak_test_005':
           setLeakTestData([newData, parsedData.type]);
@@ -57,7 +74,7 @@ const WebSocketConsoleLogger: React.FC = () => {
           break;
       }
     };
-
+  }
     ws.current.onclose = (event: CloseEvent) => {
       console.log(`WebSocket closed: ${event.reason}`);
     };
@@ -69,6 +86,7 @@ const WebSocketConsoleLogger: React.FC = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+
       {leakTestData && (
         <div className="w-full" key="leak_test">
           <Card data={leakTestData[0]} type={leakTestData[1]} />

@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-
 import Workers from '@/pages/workers';
 import Machines from '@/pages/machines';
 import Login from '@/pages/login';
 import Sidebar from '@/components/ui/SideBar';
 import ProtectedRoute from '@/components/protectedRoute';
 import Dashboard from './pages/dashboard';
+import Jobs from '@/pages/jobs';
 
 const App: React.FC = () => {
   return (  
@@ -31,8 +31,10 @@ const AppContent: React.FC = () => {
       <div style={{ flex: 1 }}>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/machines" element={<ProtectedRoute allowedRoles={['SUPERUSER']}><Machines /></ProtectedRoute>} />
+          <Route path="/machines" element={<ProtectedRoute allowedRoles={[]}><Machines /></ProtectedRoute>} />
           <Route path="/" element={<ProtectedRoute allowedRoles={[]}><Dashboard /></ProtectedRoute>} />
+          <Route path="/jobs" element={<ProtectedRoute allowedRoles={["SUPERUSER","MAINTAINER"]}><Jobs /></ProtectedRoute>} />
+
           <Route
             path="/workers"
             element={

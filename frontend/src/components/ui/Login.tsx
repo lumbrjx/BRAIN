@@ -17,9 +17,10 @@ const LoginComponent = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://brain-production-0450.up.railway.app/api/v1/auth/login', {
+      const response = await fetch('https://38c1-105-235-139-169.ngrok-free.app/api/v1/auth/login', {
         method: 'POST',
         headers: {
+          'ngrok-skip-browser-warning': '69420',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),

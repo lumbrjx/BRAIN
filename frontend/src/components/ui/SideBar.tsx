@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaTachometerAlt, FaCogs, FaUsers, FaTools, FaSignOutAlt, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import { FaTachometerAlt, FaCogs, FaUsers, FaTools,FaTasks, FaSignOutAlt, FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 import { useAuth } from '@/auth/authWrapper';
 import { Link } from 'react-router-dom';
 const Sidebar: React.FC = () => {
@@ -70,6 +70,14 @@ const Sidebar: React.FC = () => {
         >
           <FaTools className="mr-2" />
           <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>Machines</span>
+        </Link>
+        <Link
+        to={"/jobs"}
+          className={`flex items-center rounded-[10px] cursor-pointer pr-5 pl-5 py-4 transition duration-200 ${getSelectedClass('jobs')} ${getHoverClass()}`}
+          onClick={() => handleItemClick('jobs')}
+        >
+          <FaTasks className="mr-2" />
+          <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>Jobs</span>
         </Link>
         <Link
         to={"/workers"}

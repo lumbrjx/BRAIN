@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@/auth/authWrapper";
+import { useQuery } from "@tanstack/react-query";
 import {
   Table,
   TableBody,
@@ -31,73 +32,55 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 
 interface Worker {
-  fullName: string;
+  id: string;
+  username: string;
   role: string;
-  createdAt: string;
+  created_at: string;
 }
 
-const workerData = [
-    {
-      fullName: "John Doe",
-      role: "Maintainer",
-      createdAt: "2024-09-21 14:30",
-    },
-    {
-      fullName: "Jane Smith",
-      role: "Operator",
-      createdAt: "2024-09-20 11:15",
-    },
-    {
-      fullName: "Alice Johnson",
-      role: "Maintainer",
-      createdAt: "2024-09-19 16:45",
-    },
-    {
-      fullName: "Michael Brown",
-      role: "Operator",
-      createdAt: "2024-09-18 10:30",
-    },
-    {
-      fullName: "Emily Davis",
-      role: "Maintainer",
-      createdAt: "2024-09-17 08:20",
-    },
-    {
-      fullName: "David Wilson",
-      role: "Operator",
-      createdAt: "2024-09-16 09:45",
-    },
-    {
-      fullName: "Emma Clark",
-      role: "Maintainer",
-      createdAt: "2024-09-15 14:10",
-    },
-    {
-      fullName: "Sophia Lewis",
-      role: "Operator",
-      createdAt: "2024-09-14 12:00",
-    },
-  ];
-  
+interface WorkersResponse {
+  message: Worker[];
+}
 
 export function WorkersTable() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 7;
-  const [roleFilter, setRoleFilter] = useState(""); 
-  const [nameFilter, setNameFilter] = useState("");
-  
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
-  const {token} = useAuth();
-  const filteredResults = workerData.filter(
-    (worker) =>
+  const [roleFilter, setRoleFilter] = useState<string>("");
+  const [nameFilter, setNameFilter] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [role, setRole] = useState<string>("");
+
+  const { token } = useAuth();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["workers", token],
+    queryFn: async () => {
+      const response = await axios.get<WorkersResponse>(
+        "https://38c1-105-235-139-169.ngrok-free.app/api/v1/users",
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data;
+    },
+    enabled: !!token,
+  });
+
+  const workers = data?.message || [];
+
+  const filteredResults = workers.filter(
+    (worker: Worker) =>
       (roleFilter === "" || worker.role === roleFilter) &&
-      (nameFilter === "" || worker.fullName.toLowerCase().includes(nameFilter.toLowerCase()))
+      (nameFilter === "" ||
+        worker.username.toLowerCase().includes(nameFilter.toLowerCase()))
   );
 
   const totalPages = Math.ceil(filteredResults.length / itemsPerPage);
-
   const currentItems = filteredResults.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -120,19 +103,23 @@ export function WorkersTable() {
 
     try {
       const response = await axios.post(
-        "https://brain-production-0450.up.railway.app/api/v1/auth/register",
-         newWorker,
+        "https://38c1-105-235-139-169.ngrok-free.app/api/v1/auth/register",
+        newWorker,
         {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Worker created successfully:", response.data);
     } catch (error) {
       console.error("Error creating worker:", error);
     }
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>An error occurred: {(error as Error).message}</p>;
 
   return (
     <div className="py-6 px-8">
@@ -148,7 +135,7 @@ export function WorkersTable() {
               className="bg-white border rounded-[14px] px-4 py-3"
             >
               <option value="">All Roles</option>
-              
+              <option value="SUPERUSER">Superuser</option>
               <option value="MAINTAINER">Maintainer</option>
               <option value="OPERATOR">Operator</option>
             </select>
@@ -165,14 +152,13 @@ export function WorkersTable() {
         </div>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-400 text-white rounded-[14px] px-4 py-6">
+            <Button className="bg-primary hover:bg-primary-foreground  text-white rounded-[14px] px-4 py-6">
               Add worker
-            </Button>
+            </Button>   
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] rounded-lg bg-[#F5F5F5]">
             <DialogHeader>
               <DialogTitle>Add worker</DialogTitle>
-
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
@@ -225,52 +211,61 @@ export function WorkersTable() {
           </DialogContent>
         </Dialog>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Full Name</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {currentItems.map((worker) => (
-            <TableRow key={worker.fullName} className="cursor-pointer">
-              <TableCell className="font-medium py-4">
-                {worker.fullName}
-              </TableCell>
-              <TableCell>{worker.role}</TableCell>
-              <TableCell>{worker.createdAt}</TableCell>
-              <TableCell className="text-right flex justify-end gap-2">
-                <Button variant="ghost" className="p-2">
-                  <Pencil size={16} />
-                </Button>
-                <Button variant="ghost" className="p-2 text-red-500">
-                  <Trash size={16} />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
 
-      <div className="flex justify-between mt-6">
-        <Button
-          className="bg-blue-600 hover:bg-blue-400 rounded-[14px] text-white"
-          onClick={goToPreviousPage}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-        <Button
-          className="bg-blue-600 hover:bg-blue-400 rounded-[14px] text-white"
-          onClick={goToNextPage}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </Button>
-      </div>
+      {filteredResults.length === 0 ? (
+        <p>No workers found.</p>
+      ) : (
+        <>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Full Name</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Created At</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {currentItems.map((worker) => (
+                <TableRow key={worker.id} className="cursor-pointer">
+                  <TableCell className="font-medium py-4">
+                    {worker.username}
+                  </TableCell>
+                  <TableCell>{worker.role}</TableCell>
+                  <TableCell>
+                    {new Date(worker.created_at).toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-right flex justify-end gap-2">
+                    <Button variant="ghost" className="p-2">
+                      <Pencil size={16} />
+                    </Button>
+                    <Button variant="ghost" className="p-2 text-red-500">
+                      <Trash size={16} />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          <div className="flex justify-between mt-6">
+            <Button
+              className="bg-blue-600 hover:bg-blue-400 rounded-[14px] text-white"
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Button
+              className="bg-blue-600 hover:bg-blue-400 rounded-[14px] text-white"
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
