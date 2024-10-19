@@ -7,6 +7,7 @@ import Login from '@/pages/login';
 import Sidebar from '@/components/ui/SideBar';
 import ProtectedRoute from '@/components/protectedRoute';
 import Dashboard from './pages/dashboard';
+import { Component } from './components/ui/BarChart';
 
 const App: React.FC = () => {
   return (  
@@ -37,7 +38,7 @@ const AppContent: React.FC = () => {
             path="/workers"
             element={
               <ProtectedRoute allowedRoles={['SUPERUSER']}>
-                <Workers />
+                <Component />
               </ProtectedRoute>
             }
           />

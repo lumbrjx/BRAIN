@@ -1,6 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { useAuth } from '@/auth/authWrapper';
-const WebSocketConsoleLogger: React.FC = () => {
+
+interface WebSocketConsoleLoggerProps {
+  onDataReceived: (data: any) => void; 
+}
+
+const WebSocketConsoleLogger: React.FC<WebSocketConsoleLoggerProps> = ({onDataReceived}) => {
   const ws = useRef<WebSocket | null>(null);
   const {token}  = useAuth();
   useEffect(() => {
@@ -17,6 +22,8 @@ const WebSocketConsoleLogger: React.FC = () => {
 
     socket.onmessage = (event) => {
       console.log('Received data:', event.data);
+      const receivedData = JSON.parse(event.data)
+      onDataReceived(receivedData)
     };
 
     socket.onerror = (error) => {
@@ -34,7 +41,7 @@ const WebSocketConsoleLogger: React.FC = () => {
         ws.current.close();
       }
     };
-  }, []);
+  }, [onDataReceived]);
 
   return <h1>machines</h1>;
 };
