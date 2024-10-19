@@ -19,7 +19,7 @@ const WebSocketConsoleLogger: React.FC = () => {
   const [agvData, setAgvData] = useState<[MachineData, string] | null>(null);
   useEffect(() => {
     if (!token) return;
-    const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
+    const API_DOMAIN = import.meta.env.VITE_API_DOMAIN;
     const wsUrl = API_DOMAIN?.replace("https://","wss://")
     const socketUrl = `${wsUrl}/api/v1/ws/channels?token=${token}`;
     ws.current = new WebSocket(socketUrl, token);

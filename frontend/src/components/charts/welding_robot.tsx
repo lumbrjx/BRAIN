@@ -20,7 +20,7 @@ interface DataPoint {
 const welding_robot: React.FC<{ token: string }> = ({ token }) => {
   const [data, setData] = useState<DataPoint[]>([]);
   const [loading, setLoading] = useState(true);
-  const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
+  const API_DOMAIN =import.meta.env.VITE_API_DOMAIN;
 
   useEffect(() => {
     const fetchData = async () => {

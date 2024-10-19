@@ -15,7 +15,7 @@ const LoginComponent = () => {
     event.preventDefault();
     setError('');
     setIsLoading(true);
-    const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
+    const API_DOMAIN = import.meta.env.VITE_API_DOMAIN;
 
     try {
       const response = await fetch(`${API_DOMAIN}/api/v1/auth/login`, {

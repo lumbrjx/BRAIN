@@ -53,7 +53,7 @@ export function WorkersTable() {
 
   const { token } = useAuth();
   
-  const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN; 
+  const API_DOMAIN = import.meta.env.VITE_API_DOMAIN; 
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["workers", token],

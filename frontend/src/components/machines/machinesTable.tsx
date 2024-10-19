@@ -38,7 +38,7 @@ const getMachines = async (apiDomain: string, token: string): Promise<MachinesRe
 };
 
 export function MachinesTable() {
-  const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN;
+  const API_DOMAIN = import.meta.env.VITE_API_DOMAIN;
 
   if (!API_DOMAIN) {
     throw new Error("API_DOMAIN environment variable is not defined.");
