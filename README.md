@@ -15,6 +15,8 @@ https://drive.google.com/file/d/1pqOwxWTvZxQOSLJSNB3HizGkTxXexs7x/view?usp=shari
 
 https://drive.google.com/file/d/1E6ZfF8D_4wYiQdcxbWL2OVIrU9637VA7/view?usp=sharing
 
+**the env var in the frontend side should be https not http. thus u gotta use negrok**
+
 ## System Architecture
 
 ### Core Components
