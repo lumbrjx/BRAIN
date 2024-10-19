@@ -1,1 +1,0 @@
-ALTER TABLE "machines" ALTER COLUMN "stateTypeE" SET DEFAULT 'WORKING';

@@ -3,7 +3,7 @@ import { RouteResponse } from "src/shared/models";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { redis } from "src/config/redis";
 import { connectionStore } from "src/config/connectionStore";
-// import { ObserveState } from "src/services/decision";
+import { ObserveState } from "src/services/decision";
 // import { recordLogs } from "src/services/recordLogs";
 // import { getLogs } from "src/services/getLogs";
 
@@ -50,8 +50,9 @@ export default async function(app: FastifyInstance) {
 				})
 				// await recordLogs(req.body)
 				// await getLogs("stamping_press_001")
-								// await ObserveState(req.body)
+				await ObserveState(req.body)
 
+				// await readQueue()
 
 
 				console.log(req.body)

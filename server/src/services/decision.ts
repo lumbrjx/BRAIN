@@ -1,4 +1,4 @@
-import { queue } from "src/config/queue";
+import { redis } from "src/config/redis";
 
 export function Decision(data: any): string | boolean {
 
@@ -25,7 +25,10 @@ export function Decision(data: any): string | boolean {
 
 export async function ObserveState(data: any) {
 	const decision = Decision(data)
+
 	if (decision) {
-		await queue.add("MAINTENENCE_TASK", { task: decision, machine: data.machine_id })
+		console.log("QUEEUEUEUEUEUEUEUEUEEUEU")
+		await redis.lpush("MAINTENECE_QUEUE", JSON.stringify({ task: decision, machine_id: data.machine_id }))
+		console.log("QUEUE DONE")
 	}
 }
