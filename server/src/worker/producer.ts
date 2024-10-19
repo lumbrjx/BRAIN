@@ -54,7 +54,6 @@ function processTaskQueue() {
 					console.log("finished task")
 
 				})
-				console.log("aaaaaaaaaaaaaaaa")
 				await redis.publish("ALERT_CHANNEL", JSON.stringify({ type: "FLOG", data: `new job created: ${job.task}` }))
 
 
