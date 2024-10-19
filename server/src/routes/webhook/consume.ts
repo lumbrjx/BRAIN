@@ -52,7 +52,7 @@ export default async function(app: FastifyInstance) {
 				}
 				clients.forEach(client => {
 					if (client?.readyState === 1) {
-						client.send(JSON.stringify({ data: bd, type: "LOG" }))
+						client.send(JSON.stringify({ data: bd, type: data.predicted === "no Fail" ? "LOG" : "ALERT" }))
 					}
 				})
 				await recordLogs(req.body)
