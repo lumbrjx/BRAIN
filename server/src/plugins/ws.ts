@@ -2,7 +2,7 @@ import { ConnectionMetadata, connectionStore } from "src/config/connectionStore"
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import { fastifyPlugin } from "fastify-plugin";
 import { WebSocket, WebSocketServer } from "ws";
-import { redis } from "src/config/redis";
+import { redis, redisPubSub } from "src/config/redis";
 import jwt from "jsonwebtoken"
 import { payloadType } from "./authenticator";
 
@@ -11,6 +11,7 @@ export const websocket = async (app: FastifyInstance) => {
 	const wss = new WebSocketServer({ server: app.server })
 
 	wss.on('connection', async (ws: WebSocket, req: FastifyRequest) => {
+		console.log(process.env.SECRET)
 		const authHeader = req.headers['authorization'];
 		if (!authHeader || !authHeader.startsWith('Bearer ')) {
 			return ws.close(4000, "Authentication required")
@@ -46,6 +47,32 @@ export const websocket = async (app: FastifyInstance) => {
 		}
 
 
+
+		redisPubSub.on('message', async (channel, message) => {
+			console.log(`Received message from channel ${channel}: ${message}`);
+
+			try {
+				const superUserKeys = await redis.keys('SUPERUSER-*');
+				const operatorKeys = await redis.keys('MAINTAINER-*');
+
+				const users = [...superUserKeys, ...operatorKeys];
+				const clients = users.map((user) => connectionStore.get(user));
+
+				if (!clients || clients.length === 0) {
+					console.log("No clients connected");
+					return;
+				}
+
+				clients.forEach((client) => {
+					if (client?.readyState === WebSocket.OPEN) {
+						client.send(message);
+					}
+				});
+			} catch (e) {
+				console.error('Error sending message to clients:', e);
+			}
+		});
+		redisPubSub.subscribe("ALERT_CHANNEL")
 
 
 		// ws.on('message', (message: any) => {

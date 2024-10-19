@@ -14,10 +14,11 @@ WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/package*.json ./
 COPY --from=builder /usr/src/app/dist ./dist
-
+COPY --from=builder /usr/src/app/ecosystem.config.cjs ./
 RUN npm install --only=production
+RUN npm install -g pm2
 
 EXPOSE 8080
 EXPOSE 8081
 
-CMD ["node", "dist/src/index.js"]
+CMD ["pm2-runtime", "start" , "ecosystem.config.cjs"]

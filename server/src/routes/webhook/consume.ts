@@ -4,6 +4,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { redis } from "src/config/redis";
 import { connectionStore } from "src/config/connectionStore";
 import { ObserveState } from "src/services/decision";
+import { recordLogs } from "src/services/recordLogs";
 // import { recordLogs } from "src/services/recordLogs";
 // import { getLogs } from "src/services/getLogs";
 
@@ -45,17 +46,14 @@ export default async function(app: FastifyInstance) {
 
 				clients.forEach(client => {
 					if (client?.readyState === 1) {
-						client.send(JSON.stringify(req.body))
+						client.send(JSON.stringify({ data: req.body, type: "LOG" }))
 					}
 				})
-				// await recordLogs(req.body)
-				// await getLogs("stamping_press_001")
+				await recordLogs(req.body)
 				await ObserveState(req.body)
 
-				// await readQueue()
 
 
-				console.log(req.body)
 				return reply.status(200).send({
 					success: true, data: req.body
 

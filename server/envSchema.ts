@@ -23,7 +23,7 @@ const envSchema = z.object({
 	// FB_OAUTH_USERINFO_URL: z.string().min(1),
 	REDIS_HOST: z.string().min(1),
 	REDIS_QUEUE: z.string().min(1),
-	REDIS_PASSWORD: z.string().min(1),
+	// REDIS_PASSWORD: z.string().min(1),
 });
 
 const envServer = envSchema.parse({
@@ -49,7 +49,7 @@ const envServer = envSchema.parse({
 	// FB_OAUTH_USERINFO_URL: process.env.FB_OAUTH_USERINFO_URL,
 	REDIS_HOST: process.env.REDIS_HOST,
 	REDIS_QUEUE: process.env.REDIS_QUEUE,
-	REDIS_PASSWORD: process.env.REDIS_PASSWORD
+	// REDIS_PASSWORD: process.env.REDIS_PASSWORD
 
 });
 
