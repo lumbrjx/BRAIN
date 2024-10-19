@@ -10,7 +10,7 @@ export default async function(app: FastifyInstance) {
 	server.get(
 		"",
 		{
-			preHandler: [app.authenticate],
+			preHandler: [app.authenticate, app.guard(["SUPERUSER", "MAINTAINER"])],
 			schema: {
 				description: "get All facotry machines",
 				summary: "machines",
