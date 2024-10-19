@@ -20,10 +20,9 @@ const envSchema = z.object({
 	SESSION_SECRET: z.string().min(1),
 	SECRET: z.string().min(1),
 	TOKEN_NAME: z.string().min(1),
-	// FB_OAUTH_USERINFO_URL: z.string().min(1),
+	AI_URL: z.string().min(1),
 	REDIS_HOST: z.string().min(1),
 	REDIS_QUEUE: z.string().min(1),
-	// REDIS_PASSWORD: z.string().min(1),
 });
 
 const envServer = envSchema.parse({
@@ -36,8 +35,6 @@ const envServer = envSchema.parse({
 	API_VERSION: process.env.API_URL,
 	HOST: process.env.HOST,
 	PORT: process.env.PORT,
-	// GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-	// GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
 	INFLUX_URL: process.env.INFLUX_URL,
 	INFLUXDB_TOKEN: process.env.INFLUXDB_TOKEN,
 	CALLBACK_URL: process.env.CALLBACK_URL,
@@ -46,10 +43,9 @@ const envServer = envSchema.parse({
 	SESSION_SECRET: process.env.SESSION_SECRET,
 	SECRET: process.env.SECRET,
 	TOKEN_NAME: process.env.TOKEN_NAME,
-	// FB_OAUTH_USERINFO_URL: process.env.FB_OAUTH_USERINFO_URL,
+	AI_URL: process.env.AI_URL,
 	REDIS_HOST: process.env.REDIS_HOST,
 	REDIS_QUEUE: process.env.REDIS_QUEUE,
-	// REDIS_PASSWORD: process.env.REDIS_PASSWORD
 
 });
 

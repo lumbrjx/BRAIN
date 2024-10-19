@@ -31,19 +31,12 @@ export default async function(app: FastifyInstance) {
 					return reply.status(500).send({ ok: false, message: cx.error });
 				}
 
-				console.log(cx.data)
 				const token = jwt.sign({
 					username: cx.data.username,
 					role: cx.data.role,
 					id: cx.data.id,
 					created_at: cx.data.created_at
-				}, process.env.SECRET, { expiresIn: "15d" });
-				// reply.setCookie(process.env.TOKEN_NAME, token, {
-				// 	path: "/",
-				// 	httpOnly: true,
-				// 	secure: false,
-				// 	maxAge: 1728000,
-				// });
+				}, process.env.SECRET, { expiresIn: "15d" }); // for simplicity, i mean we are not making the next NSA platform XD
 				return reply.status(200).send({
 					success: true, data: {
 						token: token, user: {

@@ -2,7 +2,6 @@ import { Point } from "@influxdata/influxdb-client"
 import { client } from "src/config/influxClient";
 
 export async function recordLogs(jsonData: any) {
-	console.log(process.env.INFLUXDB_TOKEN)
 	const point = new Point(jsonData.machine_id);
 
 	for (const [key, value] of Object.entries(jsonData)) {

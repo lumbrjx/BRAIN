@@ -11,6 +11,7 @@ export default async function(app: FastifyInstance) {
 	server.get(
 		"",
 		{
+			preHandler: [app.authenticate],
 			schema: {
 				querystring: IdSchema,
 				description: "get last 15 minutes machines metrics",
@@ -48,7 +49,6 @@ export async function getMetricsService(
 ): Promise<Result<any | boolean | undefined, Error | string | undefined>> {
 	try {
 		const metrics = await getLogs(x.id)
-		console.log(metrics)
 		return parseToResult(metrics)
 	} catch (error: any) {
 		return parseToResult(undefined, "ROLLBACK");

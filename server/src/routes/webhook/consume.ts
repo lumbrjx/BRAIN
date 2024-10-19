@@ -5,6 +5,7 @@ import { redis } from "src/config/redis";
 import { connectionStore } from "src/config/connectionStore";
 import { ObserveState } from "src/services/decision";
 import { recordLogs } from "src/services/recordLogs";
+import { extractNumericValues, predict } from "src/services/analyseState";
 // import { recordLogs } from "src/services/recordLogs";
 // import { getLogs } from "src/services/getLogs";
 
@@ -15,7 +16,7 @@ export default async function(app: FastifyInstance) {
 		{
 			schema: {
 				description: "machines callback consumer",
-				tags: ["Core"],
+				tags: ["core"],
 				response: {
 					400: RouteResponse,
 					401: RouteResponse,
@@ -28,7 +29,7 @@ export default async function(app: FastifyInstance) {
 			reply: FastifyReply,
 		) {
 			try {
-
+				// needs api key for protection, sadly DevFest webhook doesnt provide this.
 				const superUserKeys = await redis.keys('SUPERUSER-*');
 				const operatorKeys = await redis.keys('OPERATOR-*');
 
@@ -39,14 +40,21 @@ export default async function(app: FastifyInstance) {
 					return reply.code(503).send({ error: 'No WebSocket clients connected' })
 
 				}
+				const vals = extractNumericValues(req.body);
+				const features = { features: vals }
+				const data = await predict(features);
+
+				const bd = { ...data, metrics: req.body }
+
 
 				if (clients.length === 0) {
 					return reply.code(503).send({ error: 'No WebSocket clients connected' })
 				}
-
 				clients.forEach(client => {
 					if (client?.readyState === 1) {
-						client.send(JSON.stringify({ data: req.body, type: "LOG" }))
+							console.log(bd)
+						client.send(JSON.stringify({ data: bd, type: data.predicted === "no Fail" ? "LOG" : "ALERT" }))
+						 // client.send(JSON.stringify({ data: bd, type:  "LOG"  }))
 					}
 				})
 				await recordLogs(req.body)
@@ -58,7 +66,7 @@ export default async function(app: FastifyInstance) {
 					success: true, data: req.body
 
 				});
-			} catch (error: any) {
+			} catch (err) {
 				return reply
 					.status(500)
 					.send({ ok: false, message: "Internal Server Error" });

@@ -55,7 +55,7 @@ export const useAuth = (): UseAuthReturn => {
       token: null,
     });
 
-    window.location.href = '/';
+    window.location.href = '/login';
   };
 
   return {

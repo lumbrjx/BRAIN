@@ -14,15 +14,17 @@ services:
   #   restart: unless-stopped
   #
   # server:
-  #   image: lumbrjx/smartcar:1.0.7 
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.izar-server.rule=Host(`localhost`)"
-  #     - "traefik.http.routers.izar-server.entrypoints=web"
-  #     - "traefik.http.services.izar-server.loadbalancer.server.port=3000"
+  #   image: lumbrjx/smartcar:1.1.7
+  #   # labels:
+  #   #   - "traefik.enable=true"
+  #   #   - "traefik.http.routers.izar-server.rule=Host(`localhost`)"
+  #   #   - "traefik.http.routers.izar-server.entrypoints=web"
+  #   #   - "traefik.http.services.izar-server.loadbalancer.server.port=8080"
   #   volumes:
   #     - .:/usr/src/app
   #     - /usr/src/app/node_modules
+  #   ports:
+  #     - "8080:8080"
   #   env_file:
   #     - .env
   #   depends_on:

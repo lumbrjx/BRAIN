@@ -63,44 +63,16 @@ server
 	});
 
 
-// server.log.info("Registering middlewares..");
-// server
-// 	.register(fastifyAutoload, {
-// 		dir: join(__dirname, "middlewares"),
-// 	})
-// 	.after(() => {
-// 		server.log.info("All middlewares are ready");
-// 	});
-// server.log.info("Registering WebSocket..");
-// server.register(WebSocketPlugin).after(() => {
-// 	server.log.info("WebSocket is Ready")
-// })
-
 server
 	.register(fastifySwagger, {
 		openapi: {
 			info: {
-				title: "smartcar api",
+				title: "carTech api",
 				description: "Api documentation",
 				version: "1.0.0",
 			},
 			servers: [],
-			components: {
-				schemas: {
-					message: {
-						description: "WebSocket message schema",
-						properties: {
-							data: {
-								type: "string"
-							},
-							channel: {
-								type: "string",
-								enum: ["join"],
-							}
-						}
-					},
-				}
-			}
+
 		},
 		transform: jsonSchemaTransform,
 	})

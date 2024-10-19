@@ -1,0 +1,20 @@
+##[pylyzer] failed /home/lumbrjx/Projects/important/B.R.A.I.N/Ai/Training/model.py 1729345274 799
+.torch = pyimport "Failure"
+.Failure = pyimport "Failure"
+
+.nn = pyimport "Failure"
+
+
+.FailureWatch: ClassType
+.FailureWatch <: Never
+.FailureWatch.act: Never
+.FailureWatch.out_layer: Never
+.FailureWatch.layer4: Never
+.FailureWatch.layer3: Never
+.FailureWatch.sigmoid: Never
+.FailureWatch.drop: Never
+.FailureWatch.layer1: Never
+.FailureWatch.layer2: Never
+.FailureWatch.__call__: (num_feat: Obj, num_classes: Obj, dropout_rate: Obj) -> Training/model.FailureWatch
+.FailureWatch.forward: (self: Training/model.FailureWatch, x: Obj) -> Never
+

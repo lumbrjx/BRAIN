@@ -20,7 +20,6 @@ export async function getLogs(machine_id: string): Promise<any[]> {
 
 	const queryClient = client.getQueryApi(ORG)
 
-	// Using Flux query language for InfluxDB 2.x
 	const fluxQuery = `
         from(bucket: "${BUCKET}")
             |> range(start: -15m)
@@ -92,12 +91,4 @@ export async function testInfluxConnection(): Promise<boolean> {
 	}
 }
 
-// Usage example:
-/*
-try {
-    const logs = await getLogs('stamping_press_001')
-    console.log('Retrieved logs:', logs)
-} catch (error) {
-    console.error('Error getting logs:', error)
-}
-*/
+

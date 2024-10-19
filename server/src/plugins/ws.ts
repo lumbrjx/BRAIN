@@ -9,20 +9,45 @@ import { payloadType } from "./authenticator";
 export const websocket = async (app: FastifyInstance) => {
 
 	const wss = new WebSocketServer({ server: app.server })
+	redisPubSub.subscribe("ALERT_CHANNEL")
+	redisPubSub.on('message', async (channel, message) => {
+		console.log(`Received message from channel ${channel}: ${message}`);
+
+		try {
+			const superUserKeys = await redis.keys('SUPERUSER-*');
+			const operatorKeys = await redis.keys('MAINTAINER-*');
+
+			const users = [...superUserKeys, ...operatorKeys];
+			const clients = users.map((user) => connectionStore.get(user));
+
+			if (!clients || clients.length === 0) {
+				console.log("No clients connected");
+				return;
+			}
+			console.log(clients.length)
+
+			clients.forEach((client) => {
+				if (client?.readyState === WebSocket.OPEN) {
+					client.send(message  );
+				}
+			});
+		} catch (e) {
+			console.error('Error sending message to clients:', e);
+		}
+
+	});
 
 	wss.on('connection', async (ws: WebSocket, req: FastifyRequest) => {
-		console.log(process.env.SECRET)
-		const authHeader = req.headers['authorization'];
-		if (!authHeader || !authHeader.startsWith('Bearer ')) {
+		const authHeader = req.headers['sec-websocket-protocol'];
+		if (!authHeader) {
 			return ws.close(4000, "Authentication required")
 		}
-		const token = authHeader.substring(7);
 
 		let socketId: string;
 
+
 		try {
-			const decoded = jwt.verify(token, process.env.SECRET)
-			console.log("auth token", decoded);
+			const decoded = jwt.verify(authHeader, process.env.SECRET)
 			req.user = decoded as payloadType;
 			const role = req.user.role
 			const userId = req.user.id
@@ -37,7 +62,6 @@ export const websocket = async (app: FastifyInstance) => {
 			}
 			await redis.set(socketId, JSON.stringify(metadata))
 			console.log(`Stored connection metadata for ${socketId}`)
-
 			console.log('Client connected');
 
 
@@ -48,42 +72,8 @@ export const websocket = async (app: FastifyInstance) => {
 
 
 
-		redisPubSub.on('message', async (channel, message) => {
-			console.log(`Received message from channel ${channel}: ${message}`);
 
-			try {
-				const superUserKeys = await redis.keys('SUPERUSER-*');
-				const operatorKeys = await redis.keys('MAINTAINER-*');
-
-				const users = [...superUserKeys, ...operatorKeys];
-				const clients = users.map((user) => connectionStore.get(user));
-
-				if (!clients || clients.length === 0) {
-					console.log("No clients connected");
-					return;
-				}
-
-				clients.forEach((client) => {
-					if (client?.readyState === WebSocket.OPEN) {
-						client.send(message);
-					}
-				});
-			} catch (e) {
-				console.error('Error sending message to clients:', e);
-			}
-		});
-		redisPubSub.subscribe("ALERT_CHANNEL")
-
-
-		// ws.on('message', (message: any) => {
-		// 	console.log(`Received: ${message}`);
-		// 	// Echo the message back to the client
-		// 	ws.send(`You said: ${message}`);
-		// });
-
-		// Handle client disconnection
 		ws.on('close', async () => {
-			console.log('Client disconnected');
 			connectionStore.delete(socketId)
 
 			try {
